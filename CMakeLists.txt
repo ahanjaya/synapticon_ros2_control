@@ -78,12 +78,30 @@ target_link_libraries(
   synapticon_soem
 )
 
+add_executable(csp_control_executable src/csp_control_executable.cpp)
+target_link_libraries(
+  csp_control_executable
+  hardware_interface::hardware_interface
+  pluginlib::pluginlib
+  rclcpp_lifecycle::rclcpp_lifecycle
+  synapticon_soem
+)
+
+add_executable(pp_control_executable src/pp_control_executable.cpp)
+target_link_libraries(
+  pp_control_executable
+  hardware_interface::hardware_interface
+  pluginlib::pluginlib
+  rclcpp_lifecycle::rclcpp_lifecycle
+  synapticon_soem
+)
+
 install(
   DIRECTORY include/
   DESTINATION include/synapticon_ros2_control
 )
 install(
-  TARGETS synapticon_ros2_control synapticon_soem torque_control_executable
+  TARGETS synapticon_ros2_control synapticon_soem torque_control_executable csp_control_executable pp_control_executable
   EXPORT synapticon_soem
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
