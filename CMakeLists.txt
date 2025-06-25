@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(synapticon_ros2_control)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -87,9 +89,9 @@ target_link_libraries(
   synapticon_soem
 )
 
-add_executable(pp_control_executable src/pp_control_executable.cpp)
+add_executable(csp_control_executable_s_curve_single_joint src/csp_control_executable_s_curve_single_joint.cpp)
 target_link_libraries(
-  pp_control_executable
+  csp_control_executable_s_curve_single_joint
   hardware_interface::hardware_interface
   pluginlib::pluginlib
   rclcpp_lifecycle::rclcpp_lifecycle
