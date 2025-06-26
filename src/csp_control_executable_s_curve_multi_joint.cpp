@@ -322,11 +322,14 @@ void simpletest(const char *ifname) {
                                 static int delay_counter = 0;
                                 static const int delay_cycles = 1000;  // 2 seconds delay
                                 static bool all_within_tolerance = false;
+
                                 // Define max speed for each joint (counts/sec)
                                 static const double max_speed[7] = {0, 436907, 436907, 436907, 218453, 218453, 218453};  // index 0 unused
 
                                 if (!prof_active && delay_counter == 0) {
-                                    double min_duration = 0.75;  // initial duration
+                                    double required_time = 0.0;
+
+                                    std::cout << std::string(50, '*') << std::endl;
                                     for (int s = 1; s <= 6; ++s) {
                                         prof[s].start_pos = in_somanet[s]->PositionValue;
                                         if (move_positive) {
@@ -334,24 +337,24 @@ void simpletest(const char *ifname) {
                                         } else {
                                             prof[s].end_pos = 0.0;
                                         }
-                                        double required_speed = std::abs(prof[s].end_pos - prof[s].start_pos) / min_duration;
 
-                                        if (required_speed > max_speed[s]) {
-                                            double needed = std::abs(prof[s].end_pos - prof[s].start_pos) / max_speed[s];
-                                            std::cout << "Joint " << s << " requires speed " << required_speed
-                                                      << ", exceeding max speed. Adjusting duration to " << needed << " seconds." << std::endl;
+                                        double min_duration_per_joint = std::abs(prof[s].end_pos - prof[s].start_pos) / max_speed[s];
+                                        std::cout << "J" << s << " | Start: " << prof[s].start_pos << " | End: " << prof[s].end_pos
+                                                  << " | Required Time: " << min_duration_per_joint << std::endl;
 
-                                            if (needed > min_duration)
-                                                min_duration = needed;
+                                        if (min_duration_per_joint > required_time) {
+                                            required_time = min_duration_per_joint;
                                         }
                                     }
 
-                                    std::cout << std::string(50, '*') << std::endl;
+                                    std::cout << "Min required time for all joints: " << required_time << " seconds." << std::endl;
+                                    required_time = std::max(required_time, 0.6);  // Ensure at least 600 ms
+                                    std::cout << "Post Process Required time for all joints: " << required_time << " seconds." << std::endl;
+
                                     for (int s = 1; s <= 6; ++s) {
-                                        std::cout << "J" << s << " | Start: " << prof[s].start_pos << " | End: " << prof[s].end_pos
-                                                  << " | Duration: " << min_duration << std::endl;
-                                        prof[s].duration = min_duration;
+                                        prof[s].duration = required_time;
                                     }
+
                                     prof_cycle = 0;
                                     prof_active = true;
                                     all_within_tolerance = false;
