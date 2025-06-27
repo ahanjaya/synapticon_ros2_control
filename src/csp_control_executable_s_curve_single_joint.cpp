@@ -128,8 +128,7 @@ void simpletest(const char *ifname) {
                 out_somanet_1 = (out_somanet_50t *)ec_slave[1].outputs;
 
                 // cyclic loop
-                // for (i = 1; i <= 10000; i++) {
-                while (1) {
+                for (i = 1; i <= 10000; i++) {
                     ec_send_processdata();
                     wkc = ec_receive_processdata(EC_TIMEOUTRET);
 
@@ -179,7 +178,6 @@ void simpletest(const char *ifname) {
 
                             double t = prof_cycle * cycle_time;
                             int32_t target = (int32_t)s_curve_position(prof, t);
-                            int32_t diff = target - in_somanet_1->PositionValue;
 
                             if (prof_active && std::abs(in_somanet_1->PositionValue - prof.end_pos) <= tolerance) {
                                 out_somanet_1->TargetPosition = prof.end_pos;
